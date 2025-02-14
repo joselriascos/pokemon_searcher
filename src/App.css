@@ -1,0 +1,18 @@
+.app-container {
+  width: 100%;
+  min-height: 100vh;
+  transition: 0.3s;
+
+  background-color: var(--background-light);
+
+  &.dark-mode {
+    background-color: var(--background-dark);
+  }
+}
+
+.app-container .loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100svh - 100px);
+}
