@@ -17,7 +17,7 @@ export function Paginator() {
     goToLastPage,
     goToFirstPage,
     goToNextPage,
-    goToPreviousPage,
+    goToPrevPage,
   } = useContent()
 
   return (
@@ -25,7 +25,7 @@ export function Paginator() {
       <button className="paginator-btn" onClick={goToFirstPage}>
         <DoubleLeftIcon />
       </button>
-      <button className="paginator-btn" onClick={goToPreviousPage}>
+      <button className="paginator-btn" onClick={goToPrevPage}>
         <LeftIcon />
       </button>
       {visibleButtons.map((pageBtn, index) => {
