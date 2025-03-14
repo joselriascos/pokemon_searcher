@@ -38,7 +38,7 @@ export default function InfoModal({ isOpen, onClose, id }) {
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
-      className="info-modal-content"
+      className={`info-modal-content ${!data ? 'loading' : ''}`}
       shouldCloseOnOverlayClick={true}
       ariaHideApp={false}
     >

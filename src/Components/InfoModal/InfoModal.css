@@ -11,18 +11,24 @@
   width: min(350px, 90vw);
   min-width: 320px;
   max-height: 90svh;
+  min-height: 10svh;
   overflow-y: auto;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   outline: none;
+
+  &.loading {
+    overflow: visible;
+  }
 }
 
 .info-modal-content .loading-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 10svh;
 }
 
 #info-container {
