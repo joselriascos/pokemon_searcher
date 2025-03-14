@@ -5,6 +5,7 @@ import { useAppContext } from '../../hooks/useAppContext.js'
 import { NextImage, PrevImage } from '../Icons.jsx'
 import { useInfoModal } from '../../hooks/useInfoModal.js'
 import { FALLBACK_IMG, IL18N } from '../../utils/consts.js'
+import { StatDisplay } from './StatDisplay.jsx'
 
 Modal.setAppElement('#root')
 
@@ -14,8 +15,24 @@ export default function InfoModal({ isOpen, onClose, id }) {
     isOpen,
   })
 
+  const stats = data?.stats.length ? data.stats : []
+  const maxStat = Math.max(...stats?.map((stat) => stat.base_stat))
+  const maxLimit = Math.max(maxStat, 100)
+  const statBarsSize = stats
+    .map((stat) => stat.base_stat)
+    .map((stat) => (stat / maxLimit) * 100)
+
   const { theme, lang } = useAppContext()
   const il18n = IL18N[lang]
+
+  const statsLabels = [
+    'HP',
+    il18n.attack,
+    il18n.defense,
+    il18n.sp_attack,
+    il18n.sp_defense,
+    il18n.speed,
+  ]
 
   return (
     <Modal
@@ -82,64 +99,19 @@ export default function InfoModal({ isOpen, onClose, id }) {
               })}
             </div>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>{il18n.base}</th>
-                <th>{il18n.stats}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>HP:</td>
-                <td id="hp">
-                  {data.stats.length
-                    ? data.stats[0].base_stat
-                    : il18n.not_found}
-                </td>
-              </tr>
-              <tr>
-                <td>{il18n.attack}:</td>
-                <td id="attack">
-                  {data.stats.length
-                    ? data.stats[1].base_stat
-                    : il18n.not_found}
-                </td>
-              </tr>
-              <tr>
-                <td>{il18n.defense}:</td>
-                <td id="defense">
-                  {data.stats.length
-                    ? data.stats[2].base_stat
-                    : il18n.not_found}
-                </td>
-              </tr>
-              <tr>
-                <td>{il18n.sp_attack}:</td>
-                <td id="special-attack">
-                  {data.stats.length
-                    ? data.stats[3].base_stat
-                    : il18n.not_found}
-                </td>
-              </tr>
-              <tr>
-                <td>{il18n.sp_defense}:</td>
-                <td id="special-defense">
-                  {data.stats.length
-                    ? data.stats[4].base_stat
-                    : il18n.not_found}
-                </td>
-              </tr>
-              <tr>
-                <td>{il18n.speed}:</td>
-                <td id="speed">
-                  {data.stats.length
-                    ? data.stats[5].base_stat
-                    : il18n.not_found}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="stats-container">
+            {/* <h3 className="stats">{il18n.base_stats}</h3> */}
+            {stats.map((_, index) => {
+              return (
+                <StatDisplay
+                  label={statsLabels[index]}
+                  value={stats[index].base_stat}
+                  barSize={statBarsSize[index]}
+                  key={index}
+                />
+              )
+            })}
+          </div>
         </div>
       )}
     </Modal>
