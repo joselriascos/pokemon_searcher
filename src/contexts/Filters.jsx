@@ -4,11 +4,7 @@ import { FILTERS_INITIAL_STATE } from '../utils/consts'
 export const FiltersContext = createContext()
 
 export function FiltersProvider({ children }) {
-  const [filters, setFilters] = useState({
-    minId: 1,
-    maxId: 10279,
-    type: 'all',
-  })
+  const [filters, setFilters] = useState(FILTERS_INITIAL_STATE)
 
   const resetFilters = () => {
     setFilters(FILTERS_INITIAL_STATE)

@@ -105,8 +105,8 @@ export const IL18N = {
 export const API_FCC_PREFIX =
   'https://pokeapi-proxy.freecodecamp.rocks/api/pokemon/'
 
-export const API_ALL_POKEMON =
-  'https://pokeapi.co/api/v2/pokemon/?limit=10279&offset=0'
+export const API_ALL_POKEMON_PREFIX =
+  'https://pokeapi.co/api/v2/pokemon?limit='
 
 export const API_POKEMON_FILTERED_BY_TYPE_PREFIX =
   'https://pokeapi.co/api/v2/type/'
@@ -121,7 +121,7 @@ export const FALLBACK_IMG =
 
 export const FILTERS_INITIAL_STATE = {
   minId: 1,
-  maxId: 10279,
+  maxId: 10277,
   type: 'all',
 }
 

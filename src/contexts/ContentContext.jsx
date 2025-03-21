@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo, createContext } from 'react'
+import { useState, useEffect, useMemo, createContext, useRef } from 'react'
 import { useAppContext } from '../hooks/useAppContext'
 import { useFilters } from '../hooks/useFilters.js'
 import { fetchData, resetScroll } from '../utils/functions'
 import {
-  API_ALL_POKEMON,
+  API_ALL_POKEMON_PREFIX,
   API_POKEMON_FILTERED_BY_TYPE_PREFIX,
   FILTERS_INITIAL_STATE,
   API_POKEMON_SEARCH_POKEMON,
@@ -21,23 +21,37 @@ export function ContentProvider({ children }) {
   const { filters, filterResults } = useFilters()
   const { changeIsModalOpen } = useAppContext()
   const { search, checkSearchInFilters } = useSearch()
+  const [totalCount, setTotalCount] = useState(0)
 
+  // fetch data to get total count
   useEffect(() => {
+    const fetchTotalCount = async () => {
+      const url = `${API_ALL_POKEMON_PREFIX}1`
+      const data = await fetchData(url)
+      setTotalCount(data.count)
+    }
+    fetchTotalCount()
+  }, [])
+
+  // fetch data depending on search and filters
+  useEffect(() => {
+    if (totalCount === 0) return
+
     const fetchDataAndFilter = async () => {
       setResults(null)
       if (search.length) {
-        const url = `${API_POKEMON_SEARCH_POKEMON}${search}/`
+        const url = `${API_POKEMON_SEARCH_POKEMON}${search}`
         try {
           const newResult = await fetchData(url)
           const checkedResult = checkSearchInFilters(newResult)
           setResults(checkedResult)
         } catch (error) {
-          console.error(error)
+          console.log(error)
         }
       } else {
         const url =
           filters.type === FILTERS_INITIAL_STATE.type
-            ? API_ALL_POKEMON
+            ? API_ALL_POKEMON_PREFIX + String(totalCount)
             : API_POKEMON_FILTERED_BY_TYPE_PREFIX + filters.type
         try {
           const newResults = await fetchData(url)
@@ -48,12 +62,12 @@ export function ContentProvider({ children }) {
           setResultsNumber(filteredResults.length || 0)
           setResults(filteredResults)
         } catch (error) {
-          console.error(error)
+          console.log(error)
         }
       }
     }
     fetchDataAndFilter()
-  }, [filters, search])
+  }, [filters, search, totalCount])
 
   const openModal = (id) => {
     if (!id) return

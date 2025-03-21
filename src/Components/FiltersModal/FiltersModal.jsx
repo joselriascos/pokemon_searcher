@@ -1,7 +1,7 @@
 import Modal from 'react-modal'
 import './FiltersModal.css'
 import { useAppContext } from '../../hooks/useAppContext'
-import { IL18N } from '../../utils/consts'
+import { FILTERS_INITIAL_STATE, IL18N } from '../../utils/consts'
 import { useFiltersModal } from '../../hooks/useFilterModal'
 
 export default function FiltersModal({ isOpen, onClose }) {
@@ -43,7 +43,7 @@ export default function FiltersModal({ isOpen, onClose }) {
                 {il18n.min}
                 <input
                   type="range"
-                  min="1"
+                  min={FILTERS_INITIAL_STATE.minId}
                   max={selectedMax}
                   placeholder="min"
                   value={selectedMin}
@@ -59,7 +59,7 @@ export default function FiltersModal({ isOpen, onClose }) {
                 <input
                   type="range"
                   min={selectedMin}
-                  max="10279"
+                  max={FILTERS_INITIAL_STATE.maxId}
                   placeholder="max"
                   value={selectedMax}
                   id="max-id-range"

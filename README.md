@@ -9,3 +9,4 @@
 - [👌] Búsqueda
 - [👌] Sistema de autocompletado en el buscador
 - [👌] Paginación
+- USAR SOLO POKEAPI
