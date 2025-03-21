@@ -1,7 +1,9 @@
-import { useState, useEffect, useMemo, createContext, useRef } from 'react'
+import { useState, useEffect, useMemo, createContext } from 'react'
 import { useAppContext } from '../hooks/useAppContext'
 import { useFilters } from '../hooks/useFilters.js'
 import { fetchData, resetScroll } from '../utils/functions'
+import { useSearch } from '../hooks/useSearch'
+import { TOTAL_POKEMON_COUNT } from '../utils/consts'
 import {
   API_ALL_POKEMON_PREFIX,
   API_POKEMON_FILTERED_BY_TYPE_PREFIX,
@@ -9,7 +11,6 @@ import {
   API_POKEMON_SEARCH_POKEMON,
   RESULTS_PER_PAGE,
 } from '../utils/consts'
-import { useSearch } from '../hooks/useSearch'
 
 export const ContentContext = createContext()
 
@@ -21,22 +22,9 @@ export function ContentProvider({ children }) {
   const { filters, filterResults } = useFilters()
   const { changeIsModalOpen } = useAppContext()
   const { search, checkSearchInFilters } = useSearch()
-  const [totalCount, setTotalCount] = useState(0)
-
-  // fetch data to get total count
-  useEffect(() => {
-    const fetchTotalCount = async () => {
-      const url = `${API_ALL_POKEMON_PREFIX}1`
-      const data = await fetchData(url)
-      setTotalCount(data.count)
-    }
-    fetchTotalCount()
-  }, [])
 
   // fetch data depending on search and filters
   useEffect(() => {
-    if (totalCount === 0) return
-
     const fetchDataAndFilter = async () => {
       setResults(null)
       if (search.length) {
@@ -51,7 +39,7 @@ export function ContentProvider({ children }) {
       } else {
         const url =
           filters.type === FILTERS_INITIAL_STATE.type
-            ? API_ALL_POKEMON_PREFIX + String(totalCount)
+            ? API_ALL_POKEMON_PREFIX + String(TOTAL_POKEMON_COUNT)
             : API_POKEMON_FILTERED_BY_TYPE_PREFIX + filters.type
         try {
           const newResults = await fetchData(url)
@@ -67,7 +55,7 @@ export function ContentProvider({ children }) {
       }
     }
     fetchDataAndFilter()
-  }, [filters, search, totalCount])
+  }, [filters, search])
 
   const openModal = (id) => {
     if (!id) return
