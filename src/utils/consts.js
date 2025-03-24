@@ -102,8 +102,8 @@ export const IL18N = {
   },
 }
 
-export const API_FCC_PREFIX =
-  'https://pokeapi-proxy.freecodecamp.rocks/api/pokemon/'
+export const API_POKEMON_INFO_PREFIX =
+  'https://pokeapi.co/api/v2/pokemon/'
 
 export const API_ALL_POKEMON_PREFIX = 'https://pokeapi.co/api/v2/pokemon?limit='
 

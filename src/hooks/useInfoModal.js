@@ -1,19 +1,34 @@
 import { useState, useEffect } from 'react'
-import { API_FCC_PREFIX } from '../utils/consts.js'
+import { API_POKEMON_INFO_PREFIX } from '../utils/consts.js'
 import { fetchData } from '../utils/functions.js'
 import { useDisableScroll } from './useDisableScroll.js'
 
 export function useInfoModal({ id, isOpen }) {
   const [data, setData] = useState(null)
-  const [actualImage, setActualImage] = useState('front_default')
+  const [sprites, setSprites] = useState([])
+  const [actualImage, setActualImage] = useState('')
 
   useDisableScroll({ isOpen })
 
   useEffect(() => {
     if (id) {
-      const url = API_FCC_PREFIX + id
+      const url = API_POKEMON_INFO_PREFIX + id
       try {
-        fetchData(url).then((newData) => setData(newData))
+        fetchData(url).then((newData) => {
+          const { sprites } = newData
+
+          // deletes if "other" or "versions" in spriteKeys or if sprite is null
+          delete sprites['other']
+          delete sprites['versions']
+
+          const filteredSprites = Object.keys(sprites).filter(
+            (key) => sprites[key] !== null
+          )
+
+          setSprites(filteredSprites)
+          setActualImage(sprites.front_default ? 'front_default' : sprites[0])
+          setData(newData)
+        })
       } catch (error) {
         throw new Error('Error fetching data: ' + error)
       }
@@ -22,13 +37,12 @@ export function useInfoModal({ id, isOpen }) {
   }, [id])
 
   const changeImage = (next) => {
-    if (data?.sprites) {
-      const spriteKeys = Object.keys(data.sprites)
-      const currentKey = spriteKeys.indexOf(actualImage)
+    if (sprites) {
+      const currentKey = sprites.indexOf(actualImage)
       const newKey = next
-        ? (currentKey + 1) % spriteKeys.length
-        : (currentKey - 1 + spriteKeys.length) % spriteKeys.length
-      setActualImage(spriteKeys[newKey])
+        ? (currentKey + 1) % sprites.length
+        : (currentKey - 1 + sprites.length) % sprites.length
+      setActualImage(sprites[newKey])
     }
   }
 
