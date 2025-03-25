@@ -48,6 +48,7 @@ export function Header() {
 
       <form onSubmit={handleSubmit}>
         <input
+          id='search-input'
           type="text"
           placeholder="Pikachu, 154, Bulbasaur, 87..."
           onFocus={handleInputFocus}
