@@ -10,10 +10,12 @@ import { StatDisplay } from './StatDisplay.jsx'
 Modal.setAppElement('#root')
 
 export default function InfoModal({ isOpen, onClose, id }) {
-  const { data, actualImage, nextImage, prevImage } = useInfoModal({
-    id,
-    isOpen,
-  })
+  const { data, actualImage, nextImage, prevImage, handleClickOnType } =
+    useInfoModal({
+      id,
+      isOpen,
+      onClose,
+    })
 
   const stats = data?.stats.length ? data.stats : []
   const maxStat = Math.max(...stats?.map((stat) => stat.base_stat))
@@ -92,7 +94,11 @@ export default function InfoModal({ isOpen, onClose, id }) {
               {data?.types?.map((element) => {
                 const type = element.type.name
                 return (
-                  <span key={type} className={`type ${type}`}>
+                  <span
+                    onClick={() => handleClickOnType(type.toLowerCase())}
+                    key={type}
+                    className={`type ${type}`}
+                  >
                     {type.toUpperCase()}
                   </span>
                 )

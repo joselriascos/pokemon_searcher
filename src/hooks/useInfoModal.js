@@ -2,11 +2,15 @@ import { useState, useEffect } from 'react'
 import { API_POKEMON_INFO_PREFIX } from '../utils/consts.js'
 import { fetchData } from '../utils/functions.js'
 import { useDisableScroll } from './useDisableScroll.js'
+import { useFilters } from './useFilters.js'
+import { useSearch } from './useSearch.js'
 
-export function useInfoModal({ id, isOpen }) {
+export function useInfoModal({ id, isOpen, onClose }) {
   const [data, setData] = useState(null)
   const [sprites, setSprites] = useState([])
   const [actualImage, setActualImage] = useState('')
+  const { setFilters } = useFilters()
+  const { resetSearch } = useSearch()
 
   useDisableScroll({ isOpen })
 
@@ -46,8 +50,14 @@ export function useInfoModal({ id, isOpen }) {
     }
   }
 
+  const handleClickOnType = (type) => {
+    setFilters((prevFilters) => ({ ...prevFilters, type }))
+    resetSearch()
+    onClose()
+  }
+
   const nextImage = () => changeImage(true)
   const prevImage = () => changeImage(false)
 
-  return { data, actualImage, nextImage, prevImage }
+  return { data, actualImage, nextImage, prevImage, handleClickOnType }
 }
