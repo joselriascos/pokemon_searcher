@@ -51,6 +51,7 @@ export function Header() {
           id='search-input'
           type="text"
           placeholder="Pikachu, 154, Bulbasaur, 87..."
+          autoComplete='off'
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
           onChange={handleChange}
