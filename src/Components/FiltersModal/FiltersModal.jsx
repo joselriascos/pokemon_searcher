@@ -1,23 +1,26 @@
 import Modal from 'react-modal'
 import './FiltersModal.css'
 import { useAppContext } from '../../hooks/useAppContext'
-import { FILTERS_INITIAL_STATE, IL18N } from '../../utils/consts'
+import { IL18N } from '../../utils/consts'
 import { useFiltersModal } from '../../hooks/useFilterModal'
+import { Slider } from '@mui/material'
 
 export default function FiltersModal({ isOpen, onClose }) {
   const { lang } = useAppContext()
   const il18n = IL18N[lang]
 
   const {
-    errors,
-    handleMinChange,
-    handleMaxChange,
+    handleRangeChange,
     handleFilter,
     resetSelection,
     setSelectedType,
-    selectedMin,
-    selectedMax,
+    handleMinIdChange,
+    handleMaxIdChange,
+    errors,
+    selectedRange,
     selectedType,
+    minIdValue,
+    maxIdValue,
   } = useFiltersModal({ isOpen, onClose })
 
   return (
@@ -38,52 +41,31 @@ export default function FiltersModal({ isOpen, onClose }) {
         <div id="filters-container">
           <h3>{il18n.filter_by_id}</h3>
           <div className="id-range-filter-container">
-            <div className="range-container">
-              <label htmlFor="min-id-range">
-                {il18n.min}
-                <input
-                  type="range"
-                  min={FILTERS_INITIAL_STATE.minId}
-                  max={selectedMax}
-                  placeholder="min"
-                  value={selectedMin}
-                  id="min-id-range"
-                  onChange={handleMinChange}
-                />
-              </label>
-            </div>
-
-            <div className="range-container">
-              <label htmlFor="max-id-range">
-                {il18n.max}
-                <input
-                  type="range"
-                  min={selectedMin}
-                  max={FILTERS_INITIAL_STATE.maxId}
-                  placeholder="max"
-                  value={selectedMax}
-                  id="max-id-range"
-                  onChange={handleMaxChange}
-                />
-              </label>
-            </div>
+            <Slider
+              value={selectedRange}
+              min={minIdValue}
+              max={maxIdValue}
+              onChange={handleRangeChange}
+              valueLabelDisplay="auto"
+              className='slider'
+            />
           </div>
 
           <div className="selected-range-display">
             <input
               type="number"
               id="min-display"
-              max={selectedMax}
-              value={selectedMin}
-              onChange={handleMinChange}
+              max={selectedRange[1]}
+              value={selectedRange[0]}
+              onChange={handleMinIdChange}
             />
             -
             <input
               type="number"
               id="max-display"
-              min={selectedMin}
-              value={selectedMax}
-              onChange={handleMaxChange}
+              min={selectedRange[0]}
+              value={selectedRange[1]}
+              onChange={handleMaxIdChange}
             />
           </div>
 

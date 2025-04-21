@@ -1,25 +1,29 @@
 import { useEffect, useState } from 'react'
 import { FILTERS_INITIAL_STATE, IL18N } from '../utils/consts.js'
 import { useFilters } from './useFilters.js'
-import { useAppContext } from './useAppContext.js'
 import { useDisableScroll } from './useDisableScroll.js'
 import { useSearch } from './useSearch.js'
+import { useAppContext } from './useAppContext.js'
 
 export function useFiltersModal({ isOpen, onClose }) {
+  const { lang } = useAppContext()
   const { resetSearch } = useSearch()
   const { filters, setFilters, resetFilters } = useFilters()
   const [errors, setErrors] = useState([])
-  const [selectedMin, setSelectedMin] = useState(filters.minId)
-  const [selectedMax, setSelectedMax] = useState(filters.maxId)
+  const [selectedRange, setSelectedRange] = useState([
+    filters.minId,
+    filters.maxId,
+  ])
   const [selectedType, setSelectedType] = useState(filters.type)
-  const { lang } = useAppContext()
   const il18n = IL18N[lang]
+
+  const minIdValue = FILTERS_INITIAL_STATE.minId
+  const maxIdValue = FILTERS_INITIAL_STATE.maxId
 
   useDisableScroll({ isOpen })
 
   useEffect(() => {
-    setSelectedMin(filters.minId)
-    setSelectedMax(filters.maxId)
+    setSelectedRange([filters.minId, filters.maxId])
     setSelectedType(filters.type)
   }, [isOpen])
 
@@ -27,42 +31,48 @@ export function useFiltersModal({ isOpen, onClose }) {
     setErrors((prevErrors) => {
       let newErrors = [...prevErrors]
 
-      if (selectedMin > selectedMax && !newErrors.includes(il18n.error1)) {
+      if (
+        selectedRange[0] > selectedRange[1] &&
+        !newErrors.includes(il18n.error1)
+      ) {
         newErrors.push(il18n.error1)
       }
 
-      if (selectedMin <= FILTERS_INITIAL_STATE.minId - 1) {
+      if (selectedRange[0] <= FILTERS_INITIAL_STATE.minId - 1) {
         const errorMsg = `${il18n.error2} ${FILTERS_INITIAL_STATE.minId - 1}`
         if (!newErrors.includes(errorMsg)) newErrors.push(errorMsg)
       }
 
-      if (selectedMax > FILTERS_INITIAL_STATE.maxId) {
+      if (selectedRange[1] > FILTERS_INITIAL_STATE.maxId) {
         const errorMsg = `${il18n.error3} ${FILTERS_INITIAL_STATE.maxId}`
         if (!newErrors.includes(errorMsg)) newErrors.push(errorMsg)
       }
 
       return newErrors
     })
-
     return () => setErrors([])
-  }, [selectedMin, selectedMax])
+  }, [selectedRange])
 
-  const handleMinChange = (e) => {
+  const handleMinIdChange = (e) => {
     const newValue = Number(e.target.value)
-    setSelectedMin(newValue)
+    setSelectedRange((prevState) => [newValue, prevState[1]])
   }
 
-  const handleMaxChange = (e) => {
+  const handleMaxIdChange = (e) => {
     const newValue = Number(e.target.value)
-    setSelectedMax(newValue)
+    setSelectedRange((prevState) => [prevState[0], newValue])
+  }
+
+  const handleRangeChange = (e, newRange) => {
+    setSelectedRange(newRange)
   }
 
   const handleFilter = () => {
     if (errors.length) return
 
     setFilters({
-      minId: selectedMin,
-      maxId: selectedMax,
+      minId: selectedRange[0],
+      maxId: selectedRange[1],
       type: selectedType,
     })
 
@@ -73,20 +83,21 @@ export function useFiltersModal({ isOpen, onClose }) {
 
   const resetSelection = () => {
     resetFilters()
-    setSelectedMin(FILTERS_INITIAL_STATE.minId)
-    setSelectedMax(FILTERS_INITIAL_STATE.maxId)
+    setSelectedRange([FILTERS_INITIAL_STATE.minId, FILTERS_INITIAL_STATE.maxId])
     setSelectedType(FILTERS_INITIAL_STATE.type)
   }
 
   return {
-    errors,
-    handleMinChange,
-    handleMaxChange,
+    handleRangeChange,
     handleFilter,
     resetSelection,
-    selectedMin,
-    selectedMax,
-    selectedType,
     setSelectedType,
+    handleMinIdChange,
+    handleMaxIdChange,
+    minIdValue,
+    maxIdValue,
+    errors,
+    selectedType,
+    selectedRange,
   }
 }
